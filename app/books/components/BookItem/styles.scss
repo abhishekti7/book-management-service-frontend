@@ -1,3 +1,20 @@
+.bookitem__wrapper {
+    position: relative;
+
+    .btn-edit {
+        cursor: pointer;
+        z-index: 10;
+        position: absolute;
+        top: 10;
+        right: 10;
+
+        svg {
+            height: 18px;
+            color: rgba(163, 163, 163);
+        }
+    }
+}
+
 .bookitem__container {
     color: #fff;
     cursor: pointer;
@@ -20,7 +37,6 @@
 
     &--meta {
         display: flex;
-        flex: 1;
         flex-direction: column;
         justify-content: space-between;
         gap: 24px;

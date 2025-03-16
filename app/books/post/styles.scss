@@ -1,0 +1,27 @@
+.postbook__container {
+    &--header {
+        margin-top: 40px;
+        color: #fff;
+
+        .header-title {
+            font-size: 3rem;
+        }
+    }
+
+    &--content {
+        .content-form, .metadata-form {
+            max-width: 800px;
+        }
+
+        .form-header {
+            font-size: 2rem;
+            color: #ccc;
+        }
+    }
+
+    &--actions {
+        .btn-add-book {
+            width: 80px;
+        }
+    }
+}

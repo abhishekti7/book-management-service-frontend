@@ -12,6 +12,7 @@ const ME_QUERY = gql`
             id
             first_name
             last_name
+            userType
             email
         }
     }

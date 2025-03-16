@@ -16,12 +16,11 @@ const iconMap = {
 
 const Header = props => {
     const pathname = usePathname();
-    const { isAuthenticated, logout, loading } = useAuth();
+    const { isAuthenticated, logout } = useAuth();
 
     const handleLogout = async () => {
         try {
-            const response = await logout();
-
+            await logout();
         } catch (error) {
             console.log(error);
         }
@@ -50,7 +49,7 @@ const Header = props => {
                         })}
 
                         {isAuthenticated ? (
-                            <div className="btn-logout"><LogOut />Logout</div>
+                            <div className="btn-logout" onClick={handleLogout}><LogOut />Logout</div>
                         ) : null}
                     </div>
                 </div>

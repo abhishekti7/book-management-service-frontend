@@ -27,6 +27,7 @@ export const GET_BOOKS = gql`
                 metadata {
                     genres
                     language
+                    average_rating
                 }
             }
             total
