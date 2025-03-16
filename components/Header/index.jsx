@@ -1,9 +1,11 @@
 'use client';
 
 import { usePathname } from "next/navigation";
-import { navItems } from "@/constants/navItems";
-import { BookOpen, User } from "lucide-react";
 import Link from "next/link";
+import { BookOpen, User, LogOut } from "lucide-react";
+
+import { navItems } from "@/constants/navItems";
+import { useAuth } from "@/contexts/auth-context";
 
 import "./styles.scss";
 
@@ -14,6 +16,16 @@ const iconMap = {
 
 const Header = props => {
     const pathname = usePathname();
+    const { isAuthenticated, logout, loading } = useAuth();
+
+    const handleLogout = async () => {
+        try {
+            const response = await logout();
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     return (
         <nav className="header__wrapper">
@@ -27,7 +39,6 @@ const Header = props => {
                 <div className="header__container--left">
                     <div className="navigation-links">
                         {navItems.map(item => {
-                            console.log(item.label, item.path === pathname)
                             return (
                                 <div
                                     key={item.id}
@@ -37,6 +48,10 @@ const Header = props => {
                                 </div>
                             );
                         })}
+
+                        {isAuthenticated ? (
+                            <div className="btn-logout"><LogOut />Logout</div>
+                        ) : null}
                     </div>
                 </div>
             </div>

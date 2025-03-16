@@ -1,0 +1,26 @@
+.component__input {
+    height: 40px;
+    border-radius: 4px;
+    width: 100%;
+    margin: 8px 0;
+
+    padding: 10px;
+
+    outline: none;
+    border: 1px solid rgba(168, 168, 168, 0.5);
+
+    background-color: #000;
+    color: #fff;
+
+    &.error {
+        border: 1px solid rgba(255, 0, 0, 0.823);
+        
+        &:active, &:focus{
+            border: 1px solid rgba(255, 0, 0, 0.823);
+        }
+    }
+
+    &:active, &:focus{
+        border: 1px solid #fff;
+    }
+}

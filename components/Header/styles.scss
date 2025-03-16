@@ -46,8 +46,29 @@
             gap: 16px;
             color: rgba(163, 163, 163);
 
+            .btn-logout {
+                padding: 10px 16px;
+                border-radius: 4px;
+                cursor: pointer;
+
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 4px;
+
+                transition: all 0.2s ease-in-out;
+
+                svg {
+                    height: 18px;
+                }
+
+                &:hover {
+                    background-color: rgba(38, 38, 38);
+                }
+            }
+
             &-item {
-                font-size: 2rem;
+                font-size: 1.8rem;
                 display: inline-block;
 
                 &.active {
@@ -56,6 +77,10 @@
                     a {
                         color: #fff;
                     }
+                }
+
+                &:hover a {
+                    color: #fff;
                 }
 
                 a {

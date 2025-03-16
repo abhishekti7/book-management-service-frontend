@@ -1,0 +1,14 @@
+.forminput__container {
+    margin: 20px 0;
+
+    &--label {
+        font-size: 1.3rem;
+        color: rgba(168, 168, 168);
+    }
+
+    &--error {
+        font-size: 1.2rem;
+        padding-left: 2px;
+        color: rgba(255, 0, 0, 0.823);
+    }
+}

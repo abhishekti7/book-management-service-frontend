@@ -1,0 +1,40 @@
+.bookitem__container {
+    color: #fff;
+    cursor: pointer;
+    
+    min-width: 300px;
+
+    border: 1px solid rgba(163, 163, 163);
+    border-radius: 8px;
+    padding: 16px 22px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    justify-content: space-between;
+
+    &--title {
+        font-size: 2.4rem;
+        font-weight: 600    ;
+    }
+
+    &--meta {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 24px;
+        line-height: 1.5;
+        font-size: 1.4rem;
+
+        .meta-author {
+            .name {
+                font-size: 1.6rem;
+            }
+
+            .date {
+                color: rgba(163, 163, 163);
+            }
+        }
+    }
+}

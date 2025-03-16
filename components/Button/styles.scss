@@ -1,6 +1,6 @@
 .button__container {
     min-height: 40px;
-    min-width: 120px;
+    min-width: 150px;
     padding: 0 20px;
 
     user-select: none;
@@ -11,11 +11,18 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    gap: 6px;
 
     font-size: 1.6rem;
 
     cursor: pointer;
     transition: all 0.2s ease;
+
+
+    svg {
+        height: 18px;
+        width: 18px;
+    }
 
     &.light {
         color: #000;

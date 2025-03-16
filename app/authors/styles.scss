@@ -1,0 +1,27 @@
+.authorlist__container {
+    margin-top: 40px;
+
+    &--header {
+        .title {
+            color: #fff;
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            color: rgba(168, 168, 168);
+            font-size: 1.6rem;
+            margin-top: 2px;
+        }
+    } 
+
+    &--content {
+        .content-list {
+            margin: 32px 0;
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+    }
+
+}
