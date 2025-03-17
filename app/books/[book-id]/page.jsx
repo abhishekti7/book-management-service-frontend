@@ -26,7 +26,7 @@ const BookDetails = props => {
 
     if (data && data.book && data.book.metadata) {
         avgRating = data.book.metadata.average_rating || 0;
-        ratingCount = data.book.metadata.ratingCount || 0;
+        ratingCount = data.book.metadata.ratings_count || 0;
     }
 
     return (
@@ -54,7 +54,7 @@ const BookDetails = props => {
                                 value={avgRating}
                                 edit={false}
                             />
-                            {data && data.book ? <div className="rating-count">{ratingCount} ratings</div> : null}
+                            {data && data.book ? <div className="rating-count">{ratingCount} rating{ratingCount === 1 ? '' : 's'}</div> : null}
                         </div>
                         <div className="info-author">
                             <Link href={`/authors/${data.book.author.id}`}>By: {data.book.author.name} <ExternalLink /></Link>

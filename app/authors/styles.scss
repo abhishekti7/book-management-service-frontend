@@ -1,6 +1,11 @@
 .authorlist__container {
     margin-top: 40px;
 
+    &--total {
+        font-size: 1.4rem;
+        color: rgba(168, 168, 168);
+    }
+    
     &--header {
         display: flex;
         flex-direction: row;

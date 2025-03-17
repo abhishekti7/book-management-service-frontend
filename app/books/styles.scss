@@ -1,6 +1,11 @@
 .bookslist__container {
     margin-top: 40px;
 
+    &--total {
+        font-size: 1.4rem;
+        color: rgba(168, 168, 168);
+    }
+
     &--header {
         display: flex;
         flex-direction: row;
@@ -23,12 +28,28 @@
 
     } 
 
+    &--filter {
+        margin-top: 20px;
+        
+        .filter-search {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 16px;
+        }
+    }
+
     &--content {
         .content-list {
             margin: 32px 0;
             display: grid;
             gap: 16px;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+
+        .content-loader {
+            font-size: 1.6rem;
+            color: #fff;
         }
     }
 }

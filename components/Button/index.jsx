@@ -1,10 +1,13 @@
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import PropTypes from "prop-types";
 
 import "./styles.scss";
 
 const Button = props => {
+    const router = useRouter();
+
     const { classes, label, onClick, mode, isLink, link, icon, isLoading } = props;
 
     let content = null;
@@ -27,6 +30,10 @@ const Button = props => {
                 if (isLoading) {
                     return;
                 }
+                if (isLink && link) {
+                    return router.push(link);
+                }
+
                 onClick();
             }}
         >
