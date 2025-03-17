@@ -3,13 +3,13 @@ import { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
+import { useAuth } from "@/contexts/auth-context";
 
+import Button from "@/components/Button";
 import BookItem from "./components/BookItem";
 import { GET_BOOKS } from "@/graphql-services/getBooks";
 
 import "./styles.scss";
-import Button from "@/components/Button";
-import { useAuth } from "@/contexts/auth-context";
 
 const Books = props => {
     const router = useRouter();
@@ -65,7 +65,7 @@ const Books = props => {
                                 description={bookItem.description}
                                 author={bookItem.author && bookItem.author.name ? bookItem.author.name : null}
                                 published_date={bookItem.published_date}
-                                averageRating={bookItem.average_rating}
+                                averageRating={bookItem.metadata ? bookItem.metadata.average_rating : 0}
                             />
                         )
                     }) : null}

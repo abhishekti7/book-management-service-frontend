@@ -1,5 +1,6 @@
 
 import { Inter } from 'next/font/google';
+import { ToastContainer } from 'react-toastify';
 
 import ClientProviders from '@/providers/ClientProvider';
 import Header from "@/components/Header";
@@ -23,6 +24,16 @@ export default function RootLayout({ children }) {
           <Header />
           <PageLayout>
             <main>
+              <ToastContainer
+                autoClose={3000}
+                position="bottom-right"
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={true}
+                draggable={false}
+                pauseOnHover={true}
+                theme="dark"
+              />
               {children}
             </main>
           </PageLayout>

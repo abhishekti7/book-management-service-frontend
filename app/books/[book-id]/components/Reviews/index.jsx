@@ -47,7 +47,7 @@ const Reviews = props => {
                 {data && data.bookReviews && data.bookReviews.length > 0 ? (
                     data.bookReviews.map(reviewItem => {
                         return (
-                            <div key={reviewItem.div}>{reviewItem.comment}</div>
+                            <div key={reviewItem.id}>{reviewItem.comment}</div>
                         )
                     })
                 ) : null}

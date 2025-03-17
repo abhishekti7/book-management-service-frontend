@@ -1,4 +1,5 @@
 .postbook__container {
+    margin: 40px 0;
     &--header {
         margin-top: 40px;
         color: #fff;
@@ -20,6 +21,10 @@
     }
 
     &--actions {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 20px;
         .btn-add-book {
             width: 80px;
         }

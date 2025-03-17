@@ -5,6 +5,7 @@ import moment from "moment/moment";
 import { Edit2Icon } from "lucide-react";
 
 import "./styles.scss";
+import ReactStars from "react-stars";
 
 const BookItem = props => {
     const router = useRouter();
@@ -38,7 +39,16 @@ const BookItem = props => {
             ) : null}
 
             <div className="bookitem__container">
-                <div className="bookitem__container--title">{title}</div>
+                <div className="bookitem__container--title">
+                    <div>
+                        {title}
+                    </div>
+                    <ReactStars
+                        value={averageRating}
+                        edit={false}
+                        count={5}
+                    />
+                </div>
 
                 <div className="bookitem__container--meta">
                     <div className="meta-desc">{truncateDescription(description)}</div>

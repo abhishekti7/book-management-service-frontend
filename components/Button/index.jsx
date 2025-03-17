@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import "./styles.scss";
 
 const Button = props => {
-    const { classes, label, onClick, mode, isLink, link, icon } = props;
+    const { classes, label, onClick, mode, isLink, link, icon, isLoading } = props;
 
     return (
         <div
@@ -27,6 +27,7 @@ Button.propTypes = {
     isLink: PropTypes.bool,
     link: PropTypes.string,
     icon: PropTypes.any,
+    isLoading: PropTypes.bool
 }
 
 export default Button;
