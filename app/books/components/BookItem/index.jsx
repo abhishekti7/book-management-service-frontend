@@ -1,11 +1,11 @@
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
+import ReactStars from "react-stars";
 import moment from "moment/moment";
 
 import { Edit2Icon } from "lucide-react";
 
 import "./styles.scss";
-import ReactStars from "react-stars";
 
 const BookItem = props => {
     const router = useRouter();
@@ -53,7 +53,6 @@ const BookItem = props => {
                 <div className="bookitem__container--meta">
                     <div className="meta-desc">{truncateDescription(description)}</div>
                     <div className="meta-author">
-                        <div className="rating">{averageRating}</div>
                         <div className="name">{author}</div>
                         {published_date ? <div className="date">Published On: {moment(published_date).format('DD MMMM YYYY')}</div> : null}
                     </div>

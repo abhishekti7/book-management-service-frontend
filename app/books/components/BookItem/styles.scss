@@ -4,13 +4,19 @@
     .btn-edit {
         cursor: pointer;
         z-index: 10;
+        padding: 10px 16px;
         position: absolute;
+        border-radius: 10px;
         top: 10;
         right: 10;
 
         svg {
             height: 18px;
             color: rgba(163, 163, 163);
+        }
+
+        &:hover {
+            background-color: rgba(38, 38, 38);
         }
     }
 }
@@ -33,7 +39,8 @@
 
     &--title {
         font-size: 2.4rem;
-        font-weight: 600    ;
+        font-weight: 600;
+        margin-right: 10px;
     }
 
     &--meta {

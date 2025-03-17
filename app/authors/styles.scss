@@ -2,16 +2,29 @@
     margin-top: 40px;
 
     &--header {
-        .title {
-            color: #fff;
-            font-size: 3rem;
-            font-weight: bold;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        .header-left {
+            flex: 1;
+            .title {
+                color: #fff;
+                font-size: 3rem;
+                font-weight: bold;
+            }
+    
+            .subtitle {
+                color: rgba(168, 168, 168);
+                font-size: 1.6rem;
+                margin-top: 2px;
+            }
         }
 
-        .subtitle {
-            color: rgba(168, 168, 168);
-            font-size: 1.6rem;
-            margin-top: 2px;
+        .header-right {
+            .btn-add {
+
+            }
         }
     } 
 

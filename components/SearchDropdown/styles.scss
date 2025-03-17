@@ -1,0 +1,99 @@
+.searchdropdown__container {
+    position: relative;
+    min-height: 40px;
+    width: 100%;
+    margin: 8px 0;
+    font-size: 1.3rem;
+    transition: all 0.2s ease-in-out;
+
+    &.error {
+        input {
+            border-color: rgba(255, 0, 0, 0.8);
+        }
+    }
+
+    &--input {
+        .input-selected {
+            height: 100%;
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            border: 1px solid rgb(168, 168, 168, 0.5);
+            border-radius: 4px;
+
+            .selected-value {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+
+                cursor: not-allowed;
+                flex: 1;
+                color: #fff;
+                padding: 0 10px;
+            }
+
+            .btn-clear {
+                border-left: 1px solid rgba(168, 168, 168, 0.5);
+                padding: 10px;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: rgba(38, 38, 38);
+                }
+
+                svg {
+                    color: rgba(168, 168, 168);
+                }
+            }
+        }
+
+        .input-notselected {
+            display: flex;
+            flex-direction: column;
+
+            input {
+                color: #fff;
+                padding: 10px;
+                background-color: #000;
+                outline: none;
+                border: 1px solid rgba(168, 168, 168, 0.5);
+                border-radius: 4px;
+
+                &:active, &:focus {
+                    border: 1px solid rgba(168, 168, 168)
+                }
+            }
+
+        }
+    }
+
+    &--dropdown {
+        position: absolute;
+        width: 100%;
+
+        .dropdown-list {
+            padding: 10px 0px;
+            height: auto;
+            min-height: 100px;
+            color: #fff;
+            overflow-y: scroll;
+            background-color: rgba(38, 38, 38);
+
+            &.empty {
+                min-height: auto;
+                padding: 10px 12px;
+            }
+
+            &-item {
+                padding: 10px 12px;
+
+                &:hover {
+                    cursor: pointer;
+                    color: #000;
+                    background-color: rgb(168, 168, 168);
+                }
+            }
+        }
+    }
+}
