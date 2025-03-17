@@ -27,6 +27,7 @@ const LOGIN_MUTATION = gql`
                 first_name
                 last_name
                 email
+                userType
             }
         }
     }
@@ -41,6 +42,7 @@ const REGISTER_MUTATION = gql`
                 first_name
                 last_name
                 email
+                userType
             }
         }
     }
@@ -69,10 +71,12 @@ export function AuthProvider({ children }) {
     });
 
     // Login mutation
-    const [loginMutation] = useMutation(LOGIN_MUTATION);
+    const [loginMutation, { loading: loginLoading }] =
+        useMutation(LOGIN_MUTATION);
 
     // Register mutation
-    const [registerMutation] = useMutation(REGISTER_MUTATION);
+    const [registerMutation, { loading: registerLoading }] =
+        useMutation(REGISTER_MUTATION);
 
     // Check for token on mount
     useEffect(() => {
@@ -112,7 +116,13 @@ export function AuthProvider({ children }) {
     };
 
     // Register function
-    const register = async ({ first_name, last_name, email, password }) => {
+    const register = async ({
+        first_name,
+        last_name,
+        email,
+        password,
+        userType,
+    }) => {
         try {
             const { data } = await registerMutation({
                 variables: {
@@ -121,6 +131,7 @@ export function AuthProvider({ children }) {
                         last_name,
                         email,
                         password,
+                        userType,
                     },
                 },
             });
@@ -170,7 +181,9 @@ export function AuthProvider({ children }) {
                 user,
                 loading,
                 login,
+                loginLoading,
                 register,
+                registerLoading,
                 logout,
                 refreshUser,
                 isAuthenticated: !!user,

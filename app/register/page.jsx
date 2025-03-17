@@ -74,6 +74,7 @@ const Register = props => {
                 password: formData.password,
                 first_name: formData.firstName,
                 last_name: formData.lastName,
+                userType: 2,
             });
             console.log(response)
         } catch (error) {
@@ -164,7 +165,11 @@ const Register = props => {
                 />
 
                 <div className="form-actions">
-                    <Button classes="form-actions-register" label="Register" onClick={handleOnRegister} />
+                    <Button
+                        classes="form-actions-register"
+                        label="Register"
+                        isLoading={isLoading}
+                        onClick={handleOnRegister} />
 
                     <div className="form-actions-login">
                         Already have an account? <Link href="/login">Login</Link>

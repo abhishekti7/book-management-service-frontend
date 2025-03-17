@@ -19,12 +19,55 @@
                 margin-top: 10px;
             }
         }
+
+        .input-error {
+            margin-top: -10px;
+            margin-bottom: 18px;
+            font-size: 1.4rem;
+            color: rgba(255, 0, 0, 0.8);
+        }
     }
 
     &--list {
+        margin-top: 40px;
         .list-error {
             font-size: 1.6rem;
             color: rgba(163, 163, 163);
+        }
+
+        .list-item {
+            margin: 10px 0;
+            padding: 12px 10px;
+            border: 1px solid rgb(163, 163, 163);
+            border-radius: 4px;
+
+            font-size: 1.4rem;
+            color: #fff;
+
+            .user {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 10px;
+                font-size: 1.4rem;
+                font-style: normal;
+                color: rgba(163, 163, 163);
+
+                span {
+                    padding-left: 10px;
+                    font-size: 1.2rem;
+                    font-style: italic;
+                }
+            }
+
+            .review {
+                margin-top: 10px;
+                .comment {
+                    font-size: 1.6rem;
+                    font-style: italic;
+                    color: #fff;
+                }
+            }
         }
     }
 }

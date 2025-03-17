@@ -1,12 +1,13 @@
 'use client';
 
 import moment from "moment";
-import { Edit2Icon, Plus, XIcon } from "lucide-react";
+import { DeleteIcon, Edit2Icon, Plus, XIcon } from "lucide-react";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 
+import { useAuth } from "@/contexts/auth-context";
 import FormInput from "@/components/FormInput";
 import FormTextarea from "@/components/FormTextarea";
 import FormSearchDropdown from "@/components/FormSearchDropdown";
@@ -16,6 +17,7 @@ import { GET_BOOK } from "@/graphql-services/getBook";
 import { ADD_BOOK } from "@/graphql-services/addBook";
 import { GET_AUTHORS } from "@/graphql-services/getAuthors";
 import { UPDATE_BOOK } from "@/graphql-services/updateBook";
+import { DELETE_BOOK } from "@/graphql-services/deleteBook";
 
 import "./styles.scss";
 
@@ -25,6 +27,8 @@ const MODES = {
 };
 
 const PostBook = () => {
+    const { isAuthenticated, user, loading } = useAuth();
+
     const params = useSearchParams();
     const router = useRouter();
 
@@ -39,6 +43,7 @@ const PostBook = () => {
     const [getBook, { getBookLoading }] = useLazyQuery(GET_BOOK);
     const [postBook, { postBookLoading }] = useMutation(ADD_BOOK);
     const [editBook, { editBookLoading }] = useMutation(UPDATE_BOOK);
+    const [deleteBook, { deleteBookLoading }] = useMutation(DELETE_BOOK);
 
     const [formData, setFormData] = useState({
         title: '',
@@ -96,7 +101,8 @@ const PostBook = () => {
                 })
             }
         } catch (error) {
-
+            toast.error('Error fetching book details. Please try again later');
+            router.replace('/books');
         }
     };
 
@@ -121,6 +127,23 @@ const PostBook = () => {
         }
     };
 
+    // check if user is logged in
+    // check whether user is authorized to visit this page
+    useEffect(() => {
+        // if user is not logged in
+        if (!loading && !isAuthenticated && !user) {
+            router.replace('/login');
+            return;
+        }
+
+        // if user is not authorized
+        if (!loading && isAuthenticated && user.userType !== 1) {
+            toast.error('You are not authorized to visit this page');
+            router.replace('/books');
+        }
+    }, [user, isAuthenticated, loading]);
+
+    // check if page is opened in add or edit mode
     useEffect(() => {
         if (params.get('action') === MODES.EDIT) {
             if (params.get('id')) {
@@ -130,12 +153,15 @@ const PostBook = () => {
         }
     }, [params]);
 
+    // fetch book details when book id is available
     useEffect(() => {
         if (bookId) {
             getBookDetails();
         }
     }, [bookId]);
 
+    // this side effect is used for debouncing of the search query for authors
+    // this will add a timer for 500ms before requesting another list from server
     useEffect(() => {
         if (!authorInput) return;
 
@@ -260,6 +286,26 @@ const PostBook = () => {
             }
         }
     };
+
+    const handleDeleteBook = async () => {
+        const user = confirm('Are you sure you want to delete this book?');
+
+        if (user) {
+            try {
+                await deleteBook({
+                    variables: {
+                        id: bookId,
+                    }
+                });
+
+                toast.success('Book delete successfully');
+                router.replace('/books');
+            } catch (error) {
+                console.log(error);
+                toast.error('Failed to delete book. Please try again later!');
+            }
+        }
+    }
 
     return (
         <div className="postbook__container">
@@ -417,6 +463,7 @@ const PostBook = () => {
                     label={`${mode === MODES.EDIT ? 'Edit' : 'Add'} book`}
                     icon={mode === MODES.EDIT ? <Edit2Icon /> : <Plus />}
                     mode="light"
+                    isLoading={mode === MODES.EDIT ? editBookLoading : postBookLoading}
                     onClick={handleOnSubmit}
                 />
                 <Button
@@ -427,6 +474,18 @@ const PostBook = () => {
                         router.replace('/books');
                     }}
                 />
+
+                {mode === MODES.EDIT ? (
+                    <Button
+                        classes="btn-delete"
+                        label="Delete Book"
+                        icon={<DeleteIcon />}
+                        mode="dark"
+                        isLoading={deleteBookLoading}
+                        onClick={handleDeleteBook}
+                    />
+                ) : null}
+
             </div>
         </div>
     );

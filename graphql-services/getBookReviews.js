@@ -6,6 +6,12 @@ export const GET_BOOK_REVIEWS = gql`
             id
             book_id
             user_id
+            user {
+                id
+                first_name
+                last_name
+                email
+            }
             rating
             comment
             created_at

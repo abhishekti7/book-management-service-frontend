@@ -22,6 +22,7 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <ClientProviders>
           <Header />
+          <div id='root-modal'></div>
           <PageLayout>
             <main>
               <ToastContainer

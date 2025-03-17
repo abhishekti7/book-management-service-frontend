@@ -24,6 +24,14 @@
         width: 18px;
     }
 
+    &.loading {
+        cursor: not-allowed;
+
+        &:active {
+            transform: none;
+        }
+    }
+
     &.light {
         color: #000;
         background-color: #fff;

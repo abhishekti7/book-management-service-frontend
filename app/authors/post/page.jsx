@@ -2,11 +2,12 @@
 
 import moment from "moment";
 import { toast } from "react-toastify";
-import { Edit2Icon, Plus, XIcon } from "lucide-react";
+import { DeleteIcon, Edit2Icon, Plus, XIcon } from "lucide-react";
 const { useState, useEffect } = require("react");
 const { useSearchParams, useRouter } = require("next/navigation");
 const { useLazyQuery, useMutation } = require("@apollo/client");
 
+import { useAuth } from "@/contexts/auth-context";
 
 import Button from "@/components/Button";
 import FormInput from "@/components/FormInput";
@@ -18,6 +19,7 @@ import { ADD_AUTHOR } from "@/graphql-services/addAuthor";
 import { UPDATE_AUTHOR } from "@/graphql-services/updateAuthor";
 
 import "./styles.scss";
+import { DELETE_AUTHOR } from "@/graphql-services/deleteAuthor";
 
 const MODES = {
     EDIT: 'edit',
@@ -25,6 +27,8 @@ const MODES = {
 };
 
 const PostAuthor = () => {
+    const { user, isAuthenticated, loading } = useAuth();
+
     const router = useRouter();
     const params = useSearchParams();
 
@@ -35,6 +39,7 @@ const PostAuthor = () => {
 
     const [addAuthor, { addAuthorLoading }] = useMutation(ADD_AUTHOR);
     const [updateAuthor, { updateAuthorLoading }] = useMutation(UPDATE_AUTHOR);
+    const [deleteAuthor, { deleteAuthorLoading }] = useMutation(DELETE_AUTHOR);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -82,6 +87,23 @@ const PostAuthor = () => {
             toast.error('Could not find author. Please try again!');
         }
     };
+
+
+    // check if user is logged in
+    // check whether user is authorized to visit this page
+    useEffect(() => {
+        // if user is not logged in
+        if (!loading && !isAuthenticated && !user) {
+            router.replace('/login');
+            return;
+        }
+
+        // if user is not authorized
+        if (!loading && isAuthenticated && user.userType !== 1) {
+            toast.error('You are not authorized to visit this page');
+            router.replace('/authors');
+        }
+    }, [user, isAuthenticated, loading]);
 
     useEffect(() => {
         if (authorId) {
@@ -197,12 +219,33 @@ const PostAuthor = () => {
                 handleEditAuthor();
             }
         }
+    };
+
+    // delete author and all the books and metadata associated with it
+    const handleDeleteAuthor = async () => {
+        const user = confirm('Are you sure you want to delete this author? All associated books and metadata will also be deleted.');
+
+        if (user) {
+            try {
+                await deleteAuthor({
+                    variables: {
+                        id: authorId,
+                    }
+                });
+
+                toast.success('Author delete successfully');
+                router.replace('/authors');
+            } catch (error) {
+                console.log(error);
+                toast.error('Failed to delete author. Please try again later!');
+            }
+        }
     }
 
     return (
         <div className="postauthor__container">
             <div className="postauthor__container--header">
-                <div className="header-title">{mode === MODES.ADD ? 'Add A New Book' : 'Edit Book'}</div>
+                <div className="header-title">{mode === MODES.ADD ? 'Add A New Author' : 'Edit Author'}</div>
             </div>
             <div className="postauthor__container--content">
                 <div className="content-form">
@@ -303,6 +346,16 @@ const PostAuthor = () => {
                         router.replace('/authors');
                     }}
                 />
+                {mode === MODES.EDIT ? (
+                    <Button
+                        classes="btn-delete"
+                        label="Delete Author"
+                        icon={<DeleteIcon />}
+                        mode="dark"
+                        isLoading={deleteAuthorLoading}
+                        onClick={handleDeleteAuthor}
+                    />
+                ) : null}
             </div>
         </div>
     );
