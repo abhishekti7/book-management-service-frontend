@@ -52,6 +52,7 @@ const Books = () => {
             sortBy: params.sortBy,
             order: params.order,
         },
+        notifyOnNetworkStatusChange: true,
         onCompleted: () => {
             console.log('complete');
             isFetchMoreLoading.current = false;
@@ -231,11 +232,11 @@ const Books = () => {
                     sortBy: params.sortBy,
                     order: params.order,
                 },
-                updateQuery(previousData) {
+                updateQuery(previousData, { fetchMoreResult }) {
                     // just return the previous data because
                     // we have already merged the incoming data in 
                     // the apollo client config using typePolicies
-                    return previousData;
+                    console.log(previousData);
                 },
             });
 
@@ -379,7 +380,7 @@ const Books = () => {
                     {loading && !data ? (
                         <div className="content-loader">Loading...</div>
                     ) : null}
-                    {!loading && data && data.books && data.books.books ? data.books.books.map(bookItem => {
+                    {data && data.books && data.books.books ? data.books.books.map(bookItem => {
                         return (
                             <BookItem
                                 key={bookItem.id}
