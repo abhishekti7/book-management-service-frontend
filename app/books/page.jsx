@@ -394,10 +394,10 @@ const Books = () => {
                         )
                     }) : null}
 
-                    {loading && data ? (
-                        <div>Loading next page...</div>
-                    ) : null}
                 </div>
+                {loading && data ? (
+                    <div className="bottom-content-loader">Loading next page...</div>
+                ) : null}
             </div>
 
         </div>

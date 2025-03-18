@@ -29,7 +29,7 @@ const Reviews = props => {
 
     const [error, setError] = useState(null);
 
-    const [addBookReview, { addReviewLoading }] = useMutation(ADD_REVIEW);
+    const [addBookReview, { loading: addReviewLoading }] = useMutation(ADD_REVIEW);
 
     const postBookReview = async () => {
         try {
@@ -43,7 +43,6 @@ const Reviews = props => {
                 }
             });
 
-            console.log(data);
             refetch();
             setReviewData({ review: '', rating: 0 });
             toast.success('Your review was successfully submitted');

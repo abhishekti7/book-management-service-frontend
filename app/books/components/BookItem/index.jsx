@@ -35,7 +35,7 @@ const BookItem = props => {
             <div className="bookitem__container--header">
                 <div className="header-container">
                     <div className="title">{title}</div>
-                    {user && isAuthenticated ? (
+                    {user && isAuthenticated && user.userType == 1 ? (
                         <div className="btn-edit" onMouseDown={handleOnBookEdit}>
                             <Edit2Icon />
                         </div>
