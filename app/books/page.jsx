@@ -67,6 +67,12 @@ const Books = () => {
         });
     };
 
+    useEffect(() => {
+        if (data) {
+            refetch();
+        }
+    }, [])
+
     // clear search input query, we will refetch the first page using default filters
     const handleOnClearSearch = () => {
         setFilters({

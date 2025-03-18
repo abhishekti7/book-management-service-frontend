@@ -46,6 +46,12 @@ const Authors = () => {
         }
     });
 
+    useEffect(() => {
+        if (data) {
+            refetch();
+        }
+    }, [])
+
     const handleOnScroll = useCallback(() => {
         const innerHeight = window.innerHeight;
         const scrollTop = document.documentElement.scrollTop;
