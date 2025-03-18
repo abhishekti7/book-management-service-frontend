@@ -71,6 +71,7 @@
     &--dropdown {
         position: absolute;
         width: 100%;
+        z-index: 11;
 
         .dropdown-list {
             padding: 10px 0px;

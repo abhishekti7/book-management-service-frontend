@@ -1,6 +1,8 @@
 'use client';
+
+import moment from "moment";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client";
 import { useRouter } from "next/navigation";
 import { Plus, Search, XIcon } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
@@ -8,7 +10,11 @@ import { useAuth } from "@/contexts/auth-context";
 import Button from "@/components/Button";
 import InputBox from "@/components/InputBox";
 import BookItem from "./components/BookItem";
+import FormSearchDropdown from "@/components/FormSearchDropdown";
+import FormDropdown from "@/components/FormDropdown";
+
 import { GET_BOOKS } from "@/graphql-services/getBooks";
+import { GET_AUTHORS } from "@/graphql-services/getAuthors";
 
 import "./styles.scss";
 
@@ -19,7 +25,15 @@ const Books = () => {
 
     const { user, isAuthenticated } = useAuth();
 
-    const [searchInput, setSearchInput] = useState('');
+    const [filters, setFilters] = useState({
+        searchInput: '',
+        authorSearchInput: '',
+        authorList: [],
+        authorSelected: null,
+        publishedYear: -1,
+    });
+
+    const authorTimer = useRef(null);
 
     const [params, setParams] = useState({
         page: 1,
@@ -27,6 +41,8 @@ const Books = () => {
         order: 'DESC',
         filter: {}
     });
+
+    const [getAuthors, { loading: getAuthorsLoading }] = useLazyQuery(GET_AUTHORS);
 
     const { loading, err, data, refetch, fetchMore } = useQuery(GET_BOOKS, {
         variables: {
@@ -41,16 +57,32 @@ const Books = () => {
         }
     });
 
-    const handleOnClearSearch = () => {
-        if (!params.filter.search) {
-            return;
-        }
+    const setFilterController = (key, value) => {
+        setFilters(prevObj => {
+            const newObj = { ...prevObj };
+            newObj[key] = value;
+            return newObj;
+        });
+    };
 
-        setSearchInput('');
+    const applyFilters = () => {
+
+    }
+
+    // clear search input query, we will refetch the first page using default filters
+    const handleOnClearSearch = () => {
+        setFilters({
+            searchInput: '',
+            authorSearchInput: '',
+            authorList: [],
+            authorSelected: null,
+            publishedYear: -1,
+        });
+
         setParams({
             page: 1,
             filter: {},
-            sortBy: 'createdBy',
+            sortBy: 'createdAt',
             order: 'DESC'
         });
 
@@ -58,13 +90,14 @@ const Books = () => {
             page: 1,
             limit: 10,
             filter: {},
-            sortBy: 'createdBy',
+            sortBy: 'createdAt',
             order: 'DESC'
         })
     }
 
+    // when search button is clicked
     const handleOnSearch = () => {
-        if (!searchInput) {
+        if (!filters.searchInput) {
             return;
         }
 
@@ -73,7 +106,7 @@ const Books = () => {
                 ...prevObj,
                 page: 1,
                 filter: {
-                    search: searchInput,
+                    search: filters.searchInput,
                 }
             }
         });
@@ -83,13 +116,105 @@ const Books = () => {
             page: 1,
             limit: 10,
             filter: {
-                search: searchInput,
+                search: filters.searchInput,
             },
             sortBy: params.sortBy,
             order: params.order,
         });
     };
 
+    // when search input is changed in the author filter input field
+    const handleOnAuthorSearchChange = (text) => {
+        setFilterController('authorSearchInput', text);
+    };
+
+    // when author filter is cleared
+    const handleOnAuthorClear = () => {
+        setFilterController('authorSelected', null);
+
+        const existingFilter = { ...params.filter };
+
+        if (existingFilter.author_id) {
+            delete existingFilter.author_id;
+        }
+
+        const filter = {
+            page: 1,
+            limit: 10,
+            sortBy: 'createdAt',
+            order: 'DESC',
+            filter: existingFilter
+        };
+
+        refetch(filter);
+        setParams(filter);
+    };
+
+    // when an author is selected from the dropdown list of author filter
+    const handleOnAuthorSelected = (id, name) => {
+        setFilterController('authorSelected', {
+            id: id,
+            name: name
+        });
+
+        const filter = {
+            page: 1,
+            limit: 10,
+            sortBy: 'createdAt',
+            order: 'DESC',
+            filter: {
+                ...params.filter,
+                author_id: id,
+            }
+        };
+
+        refetch(filter);
+        setParams(filter);
+    };
+
+    // fetch list of authors based on search input
+    const fetchAuthorOptions = async () => {
+        try {
+            const data = await getAuthors({
+                variables: {
+                    page: 1,
+                    limit: 10,
+                    filter: {
+                        name: filters.authorSearchInput,
+                    },
+                    sortBy: 'createdAt',
+                    orderBy: 'desc'
+                }
+            });
+            setFilterController('authorList', data.data.authors.authors);
+        } catch (error) {
+            console.log(error);
+            setFilterController('authorList', []);
+        }
+    }
+
+    // this effect acts as a debouncer, sqaushes concurrent fetch requests
+    // and sends out a single request once every 500ms after
+    // the search input changes
+    useEffect(() => {
+        if (!filters.authorSearchInput) return;
+
+        if (authorTimer.current) return;
+
+        const timerId = setTimeout(() => {
+            fetchAuthorOptions();
+
+            // clear the timer and reset state
+            clearTimeout(authorTimer.current);
+            authorTimer.current = null;
+        }, 500);
+
+        authorTimer.current = timerId;
+    }, [filters.authorSearchInput]);
+
+
+    // handles scroll event on the window
+    // when user reaches the required scroll length, we fetch the next page
     const handleOnScroll = useCallback(() => {
         const innerHeight = window.innerHeight;
         const scrollTop = document.documentElement.scrollTop;
@@ -99,6 +224,7 @@ const Books = () => {
             return;
         }
 
+        // check if next page is already not loading
         if (!isFetchMoreLoading.current && (innerHeight + scrollTop + 100) >= scrollHeight) {
             isFetchMoreLoading.current = true;
             fetchMore({
@@ -109,6 +235,9 @@ const Books = () => {
                     order: params.order,
                 },
                 updateQuery(previousData) {
+                    // just return the previous data because
+                    // we have already merged the incoming data in 
+                    // the apollo client config using typePolicies
                     return previousData;
                 },
             });
@@ -123,6 +252,7 @@ const Books = () => {
         }
     }, [isFetchMoreLoading, data]);
 
+    // add an event listener for scroll on window
     useEffect(() => {
         window.addEventListener('scroll', handleOnScroll);
 
@@ -130,6 +260,44 @@ const Books = () => {
             window.removeEventListener('scroll', handleOnScroll);
         }
     }, [isFetchMoreLoading, data]);
+
+    const handleOnYearChange = (value) => {
+        setFilterController('publishedYear', value);
+
+        const existingFilter = {
+            ...params.filter,
+        };
+
+        if (value == -1) {
+            delete existingFilter.published_on;
+        } else {
+            existingFilter['published_on'] = value;
+        }
+
+        const filter = {
+            page: 1,
+            limit: 10,
+            sortBy: 'createdAt',
+            order: 'DESC',
+            filter: existingFilter
+        };
+
+        refetch(filter);
+        setParams(filter);
+    };
+
+    const getYearOptions = () => {
+        const options = [];
+
+        for (let i = moment().year(); i >= 1950; i--) {
+            options.push({
+                id: i,
+                value: i,
+            });
+        };
+
+        return [{ id: -1, value: 'Select year' }, ...options];
+    }
 
     return (
         <div className="bookslist__container">
@@ -156,9 +324,9 @@ const Books = () => {
                 <div className="filter-search">
                     <InputBox
                         placeholder="Search on title and description"
-                        value={searchInput}
+                        value={filters.searchInput}
                         onChange={(text) => {
-                            setSearchInput(text);
+                            setFilterController('searchInput', text)
                         }}
                         onKeyDown={(event) => {
                             if (event.key === 'Enter') {
@@ -179,6 +347,29 @@ const Books = () => {
                         isLoading={loading}
                         onClick={handleOnClearSearch}
                     />
+                </div>
+
+                <div className="filter-options">
+                    <div className="options-author">
+                        <FormSearchDropdown
+                            label="Filter by author"
+                            placeholder="Type to search"
+                            options={filters.authorList}
+                            selected={filters.authorSelected}
+                            onItemSelected={handleOnAuthorSelected}
+                            onChange={handleOnAuthorSearchChange}
+                            onClear={handleOnAuthorClear}
+                        />
+                    </div>
+
+                    <div className="options-year">
+                        <FormDropdown
+                            label="Filter by year of publication"
+                            value={filters.publishedYear}
+                            options={getYearOptions()}
+                            onChange={handleOnYearChange}
+                        />
+                    </div>
                 </div>
             </div>
 

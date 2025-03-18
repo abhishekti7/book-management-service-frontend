@@ -39,11 +39,11 @@ const PostBook = () => {
     const [authorsList, setAuthorsList] = useState([]);
     const authorTimer = useRef(null);
 
-    const [getAuthors, { getAuthorsLoading }] = useLazyQuery(GET_AUTHORS);
-    const [getBook, { getBookLoading }] = useLazyQuery(GET_BOOK);
-    const [postBook, { postBookLoading }] = useMutation(ADD_BOOK);
-    const [editBook, { editBookLoading }] = useMutation(UPDATE_BOOK);
-    const [deleteBook, { deleteBookLoading }] = useMutation(DELETE_BOOK);
+    const [getAuthors, { loading: getAuthorsLoading }] = useLazyQuery(GET_AUTHORS);
+    const [getBook, { loading: getBookLoading }] = useLazyQuery(GET_BOOK);
+    const [postBook, { loading: postBookLoading }] = useMutation(ADD_BOOK);
+    const [editBook, { loading: editBookLoading }] = useMutation(UPDATE_BOOK);
+    const [deleteBook, { loading: deleteBookLoading }] = useMutation(DELETE_BOOK);
 
     const [formData, setFormData] = useState({
         title: '',

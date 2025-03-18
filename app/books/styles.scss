@@ -37,6 +37,18 @@
             align-items: center;
             gap: 16px;
         }
+
+        .filter-options {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 50px;
+
+            .options-author {
+                flex: 1;
+            }
+        }
     }
 
     &--content {
