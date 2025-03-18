@@ -28,8 +28,8 @@ const Authors = () => {
     const [params, setParams] = useState({
         page: 1,
         filter: {},
-        sortBy: 'createdAt',
-        order: 'DESC',
+        sortBy: 'id',
+        order: 'ASC',
     });
 
     const { loading, err, data, refetch, fetchMore } = useQuery(GET_AUTHORS, {
@@ -93,16 +93,16 @@ const Authors = () => {
         setParams({
             page: 1,
             filter: {},
-            sortBy: 'createdAt',
-            order: 'DESC'
+            sortBy: 'id',
+            order: 'ASC'
         });
 
         refetch({
             page: 1,
             limit: 10,
             filter: {},
-            sortBy: 'createdAt',
-            order: 'DESC'
+            sortBy: 'id',
+            order: 'ASC'
         })
     }
 

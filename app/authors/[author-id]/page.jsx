@@ -26,12 +26,10 @@ const AuthorDetails = props => {
             filter: {
                 author_id: params['author-id'],
             },
-            sortBy: 'createdAt',
-            order: 'DESC'
+            sortBy: 'id',
+            order: 'ASC'
         }
     });
-
-    console.log(data, error);
 
     const getContent = () => {
         if (loading) {

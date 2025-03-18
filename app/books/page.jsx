@@ -37,8 +37,8 @@ const Books = () => {
 
     const [params, setParams] = useState({
         page: 1,
-        sortBy: 'createdAt',
-        order: 'DESC',
+        sortBy: 'id',
+        order: 'ASC',
         filter: {}
     });
 
@@ -66,7 +66,6 @@ const Books = () => {
             return newObj;
         });
     };
-
 
     // clear search input query, we will refetch the first page using default filters
     const handleOnClearSearch = () => {
