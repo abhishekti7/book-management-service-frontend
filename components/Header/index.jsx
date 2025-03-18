@@ -1,8 +1,8 @@
 'use client';
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { BookOpen, User, LogOut } from "lucide-react";
+import { BookOpen, User, LogOut, LogIn, Plus } from "lucide-react";
 
 import { navItems } from "@/constants/navItems";
 import { useAuth } from "@/contexts/auth-context";
@@ -16,6 +16,7 @@ const iconMap = {
 
 const Header = props => {
     const pathname = usePathname();
+    const router = useRouter();
     const { isAuthenticated, logout } = useAuth();
 
     const handleLogout = async () => {
@@ -50,7 +51,19 @@ const Header = props => {
 
                         {isAuthenticated ? (
                             <div className="btn-logout" onClick={handleLogout}><LogOut />Logout</div>
-                        ) : null}
+                        ) : (
+                            <>
+                                {pathname === '/login' ? (
+                                    <div className="btn-register" onClick={() => {
+                                        router.push('/register')
+                                    }}><Plus /> Register</div>
+                                ) : (
+                                    <div className="btn-login" onClick={() => {
+                                        router.push('/login')
+                                    }}><LogIn /> Login</div>
+                                )}
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
