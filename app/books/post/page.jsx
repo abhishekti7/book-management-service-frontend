@@ -500,7 +500,7 @@ const PostBook = () => {
             ) : null}
 
             {mode === MODES.EDIT && bookData ? getContent() : null}
-            {mode === MODES.ADD && bookData ? getContent() : null}
+            {mode === MODES.ADD ? getContent() : null}
         </div>
     );
 };
