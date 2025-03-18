@@ -1,7 +1,7 @@
 'use client';
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useQuery } from "@apollo/client";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, Search, XIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { useAuth } from "@/contexts/auth-context";
@@ -9,13 +9,15 @@ import { useAuth } from "@/contexts/auth-context";
 import { GET_AUTHORS } from "@/graphql-services/getAuthors";
 import Button from "@/components/Button";
 import AuthorItem from "./components/AuthorItem";
+import InputBox from "@/components/InputBox";
 
 import "./styles.scss";
 
-const Authors = props => {
+const Authors = () => {
     const router = useRouter();
     const { user, isAuthenticated } = useAuth();
 
+    const [searchInput, setSearchInput] = useState('');
     const isFetchMoreLoading = useRef(false);
 
     const [params, setParams] = useState({
@@ -25,7 +27,7 @@ const Authors = props => {
         order: 'DESC',
     });
 
-    const { loading, err, data, fetchMore } = useQuery(GET_AUTHORS, {
+    const { loading, err, data, refetch, fetchMore } = useQuery(GET_AUTHORS, {
         variables: {
             page: params.page,
             limit: 10,
@@ -80,6 +82,55 @@ const Authors = props => {
         }
     }, [isFetchMoreLoading, data]);
 
+    const handleOnClearSearch = () => {
+        if (!params.filter.search) {
+            return;
+        }
+
+        setSearchInput('');
+        setParams({
+            page: 1,
+            filter: {},
+            sortBy: 'createdAt',
+            order: 'DESC'
+        });
+
+        refetch({
+            page: 1,
+            limit: 10,
+            filter: {},
+            sortBy: 'createdAt',
+            order: 'DESC'
+        })
+    }
+
+    const handleOnSearch = () => {
+        if (!searchInput) {
+            return;
+        }
+
+        setParams(prevObj => {
+            return {
+                ...prevObj,
+                page: 1,
+                filter: {
+                    search: searchInput,
+                }
+            }
+        });
+
+        // refetch the query with the new search query
+        refetch({
+            page: 1,
+            limit: 10,
+            filter: {
+                search: searchInput,
+            },
+            sortBy: params.sortBy,
+            order: params.order,
+        });
+    };
+
     return (
         <div className="authorlist__container">
             <div className="authorlist__container--header">
@@ -102,8 +153,38 @@ const Authors = props => {
                 </div>
             </div>
 
+            <div className="authorlist__container--filter">
+                <div className="filter-search">
+                    <InputBox
+                        placeholder="Search on name and biography"
+                        value={searchInput}
+                        onChange={(text) => {
+                            setSearchInput(text);
+                        }}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter') {
+                                handleOnSearch();
+                            }
+                        }}
+                    />
+                    <Button
+                        label="Search"
+                        icon={<Search />}
+                        isLoading={loading}
+                        onClick={handleOnSearch}
+                    />
+                    <Button
+                        label="Clear"
+                        icon={<XIcon />}
+                        mode="dark"
+                        isLoading={loading}
+                        onClick={handleOnClearSearch}
+                    />
+                </div>
+            </div>
+
             {data && data.authors ? (
-                <div className="authorlist__container--total">{data.authors.total} author{data.authors.total > 0 ? 's' : ''} found</div>
+                <div className="authorlist__container--total">{data.authors.total} author{data.authors.total > 1 ? 's' : ''} found</div>
             ) : null}
 
             <div className="authorlist__container--content">

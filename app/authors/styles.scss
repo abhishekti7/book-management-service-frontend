@@ -5,6 +5,17 @@
         font-size: 1.4rem;
         color: rgba(168, 168, 168);
     }
+
+    &--filter {
+        margin-top: 20px;
+        
+        .filter-search {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 16px;
+        }
+    }
     
     &--header {
         display: flex;

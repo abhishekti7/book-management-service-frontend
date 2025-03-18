@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { useRouter } from "next/navigation";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, XIcon } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 
 import Button from "@/components/Button";
@@ -12,26 +12,27 @@ import { GET_BOOKS } from "@/graphql-services/getBooks";
 
 import "./styles.scss";
 
-const Books = props => {
+const Books = () => {
     const router = useRouter();
 
     const isFetchMoreLoading = useRef(false);
 
     const { user, isAuthenticated } = useAuth();
-    const [filterData, setFilterData] = useState({
-        search: ''
-    });
+
+    const [searchInput, setSearchInput] = useState('');
 
     const [params, setParams] = useState({
         page: 1,
         sortBy: 'createdAt',
-        order: 'DESC'
+        order: 'DESC',
+        filter: {}
     });
 
-    const { loading, err, data, fetchMore } = useQuery(GET_BOOKS, {
+    const { loading, err, data, refetch, fetchMore } = useQuery(GET_BOOKS, {
         variables: {
             page: params.page,
             limit: 10,
+            filter: params.filter,
             sortBy: params.sortBy,
             order: params.order,
         },
@@ -40,16 +41,53 @@ const Books = props => {
         }
     });
 
+    const handleOnClearSearch = () => {
+        if (!params.filter.search) {
+            return;
+        }
+
+        setSearchInput('');
+        setParams({
+            page: 1,
+            filter: {},
+            sortBy: 'createdBy',
+            order: 'DESC'
+        });
+
+        refetch({
+            page: 1,
+            limit: 10,
+            filter: {},
+            sortBy: 'createdBy',
+            order: 'DESC'
+        })
+    }
+
     const handleOnSearch = () => {
-        // setParams(prevObj => {
-        //     return {
-        //         ...prevObj,
-        //         page: 1,
-        //     }
-        // })
-        // refetch({
-        //     page: 1,
-        // })
+        if (!searchInput) {
+            return;
+        }
+
+        setParams(prevObj => {
+            return {
+                ...prevObj,
+                page: 1,
+                filter: {
+                    search: searchInput,
+                }
+            }
+        });
+
+        // refetch the query with the new search query
+        refetch({
+            page: 1,
+            limit: 10,
+            filter: {
+                search: searchInput,
+            },
+            sortBy: params.sortBy,
+            order: params.order,
+        });
     };
 
     const handleOnScroll = useCallback(() => {
@@ -118,14 +156,14 @@ const Books = props => {
                 <div className="filter-search">
                     <InputBox
                         placeholder="Search on title and description"
-                        value={filterData.search}
+                        value={searchInput}
                         onChange={(text) => {
-                            setFilterData(prevObj => {
-                                return {
-                                    ...prevObj,
-                                    search: text,
-                                }
-                            })
+                            setSearchInput(text);
+                        }}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter') {
+                                handleOnSearch();
+                            }
                         }}
                     />
                     <Button
@@ -133,6 +171,13 @@ const Books = props => {
                         icon={<Search />}
                         isLoading={loading}
                         onClick={handleOnSearch}
+                    />
+                    <Button
+                        label="Clear"
+                        icon={<XIcon />}
+                        mode="dark"
+                        isLoading={loading}
+                        onClick={handleOnClearSearch}
                     />
                 </div>
             </div>

@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import "./styles.scss";
 
 const InputBox = props => {
-    const { placeholder, inputType, value, error, onChange } = props;
+    const { placeholder, inputType, value, error, onChange, onKeyDown } = props;
 
     return (
         <input
@@ -11,6 +11,7 @@ const InputBox = props => {
             placeholder={placeholder}
             type={inputType}
             value={value}
+            onKeyDown={onKeyDown}
             onChange={(event) => {
                 onChange(event.target.value);
             }}
@@ -21,6 +22,7 @@ const InputBox = props => {
 InputBox.propTypes = {
     placeholder: PropTypes.string,
     onChange: PropTypes.func.isRequired,
+    onKeyDown: PropTypes.func,
 }
 
 export default InputBox;
