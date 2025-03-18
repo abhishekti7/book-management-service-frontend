@@ -6,7 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "docker:build": "docker build -t i-bookshelf-frontend .",
+    "docker:run": "docker run --rm -p 3000:3000 --name c-bookshelf-frontend i-bookshelf-frontend"
   },
   "dependencies": {
     "@apollo/client": "^3.5.4",

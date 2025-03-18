@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import PageLayout from "@/components/PageLayout";
 
 import "./globals.scss";
+import { Suspense } from 'react';
 
 // page metadata
 export const metadata = {
@@ -35,7 +36,9 @@ export default function RootLayout({ children }) {
                 pauseOnHover={true}
                 theme="dark"
               />
-              {children}
+              <Suspense>
+                {children}
+              </Suspense>
             </main>
           </PageLayout>
         </ClientProviders>
