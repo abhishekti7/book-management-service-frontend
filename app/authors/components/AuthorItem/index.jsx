@@ -20,26 +20,26 @@ const AuthorItem = props => {
     };
 
     return (
-        <div className="authoritem__wrapper" onClick={() => {
+        <div className="authoritem__container" onClick={() => {
             router.push(`/authors/${id}`);
         }}>
-            {isAuthenticated && user && user.userType == 1 ? (
-                <div className="btn-edit" onMouseDown={(event) => {
-                    event.preventDefault();
-                    router.push(`/authors/post?action=edit&id=${id}`)
-                }}>
-                    <Edit2Icon />
+            <div className="authoritem__container--name">
+                <div className="header-container">
+                    <div className="name">{name}</div>
+                    {isAuthenticated && user && user.userType == 1 ? (
+                        <div className="btn-edit" onMouseDown={(event) => {
+                            event.preventDefault();
+                            router.push(`/authors/post?action=edit&id=${id}`)
+                        }}>
+                            <Edit2Icon />
+                        </div>
+                    ) : null}
                 </div>
-            ) : null}
-            <div className="authoritem__container">
-                <div className="authoritem__container--name">
-                    {name}
-                </div>
+            </div>
 
-                <div className="authoritem__container--meta">
-                    <div className="meta-biography">{truncateBiography(biography)}</div>
-                    {dateOfBirth ? <div className="meta-dob">Date of Birth: {moment(dateOfBirth).format('DD MMMM YYYY')}</div> : null}
-                </div>
+            <div className="authoritem__container--meta">
+                <div className="meta-biography">{truncateBiography(biography)}</div>
+                {dateOfBirth ? <div className="meta-dob">Date of Birth: {moment(dateOfBirth).format('DD MMMM YYYY')}</div> : null}
             </div>
         </div>
     )

@@ -1,6 +1,11 @@
 .postbook__container {
     margin: 40px 0;
 
+    .content-loader {
+        font-size: 1.6rem;
+        color: #fff;
+    }
+
     &--header {
         margin-top: 40px;
         color: #fff;

@@ -17,9 +17,9 @@ import MandatoryAsterisk from "@/components/MandatoryAsterisk";
 import { GET_AUTHOR } from "@/graphql-services/getAuthor";
 import { ADD_AUTHOR } from "@/graphql-services/addAuthor";
 import { UPDATE_AUTHOR } from "@/graphql-services/updateAuthor";
+import { DELETE_AUTHOR } from "@/graphql-services/deleteAuthor";
 
 import "./styles.scss";
-import { DELETE_AUTHOR } from "@/graphql-services/deleteAuthor";
 
 const MODES = {
     EDIT: 'edit',
@@ -33,6 +33,7 @@ const PostAuthor = () => {
     const params = useSearchParams();
 
     const [mode, setMode] = useState(MODES.ADD);
+    const [authorData, setAuthorData] = useState(null);
     const [authorId, setAuthorId] = useState(null);
 
     const [getAuthor, { getAuthorLoading }] = useLazyQuery(GET_AUTHOR);
@@ -72,7 +73,7 @@ const PostAuthor = () => {
 
             if (data && data.data && data.data.author) {
                 const author = data.data.author;
-
+                setAuthorData(author);
                 setFormData({
                     name: author.name,
                     biography: author.biography,
@@ -242,121 +243,133 @@ const PostAuthor = () => {
         }
     }
 
+    const getContent = () => {
+        return (
+            <>
+                <div className="postauthor__container--header">
+                    <div className="header-title">{mode === MODES.ADD ? 'Add A New Author' : 'Edit Author'}</div>
+                </div>
+                <div className="postauthor__container--content">
+                    <div className="content-form">
+                        <FormInput
+                            label={<>Name of the author <MandatoryAsterisk /></>}
+                            placeholder="Enter name of the author"
+                            value={formData.name}
+                            error={error.name}
+                            onChange={text => {
+                                setFormData(prevObj => {
+                                    return {
+                                        ...prevObj,
+                                        name: text,
+                                    }
+                                });
+                            }}
+                        />
+
+                        <FormTextarea
+                            label={<>Biography <MandatoryAsterisk /></>}
+                            placeholder="Enter biography for the author"
+                            value={formData.biography}
+                            error={error.biography}
+                            rows={10}
+                            onChange={text => {
+                                setFormData(prevObj => {
+                                    return {
+                                        ...prevObj,
+                                        biography: text,
+                                    }
+                                })
+                            }}
+                        />
+
+                        <FormInput
+                            label={<>Date of birth (YYYY-MM-DD) <MandatoryAsterisk /></>}
+                            placeholder="Enter date of birth of the author (YYYY-MM-DD)"
+                            value={formData.date_of_birth}
+                            error={error.date_of_birth}
+                            onChange={text => {
+                                setFormData(prevObj => {
+                                    return {
+                                        ...prevObj,
+                                        date_of_birth: text,
+                                    }
+                                });
+                            }}
+                        />
+                    </div>
+
+                    <div className="form-header">
+                        Enter Metadata for the author
+                    </div>
+
+                    <div className="metadata-form">
+                        <FormInput
+                            label="Nationality"
+                            placeholder="Enter nationality of the author"
+                            value={formData.nationality}
+                            onChange={text => {
+                                setFormData(prevObj => {
+                                    return {
+                                        ...prevObj,
+                                        nationality: text,
+                                    }
+                                });
+                            }}
+                        />
+                        <FormInput
+                            label="Languages"
+                            placeholder="Enter langauges of the author"
+                            value={formData.languages}
+                            onChange={text => {
+                                setFormData(prevObj => {
+                                    return {
+                                        ...prevObj,
+                                        languages: text,
+                                    }
+                                });
+                            }}
+                        />
+                    </div>
+                </div>
+
+                <div className="postauthor__container--actions">
+                    <Button
+                        classes="btn-add-author"
+                        label={`${mode === MODES.EDIT ? 'Edit' : 'Add'} author`}
+                        icon={mode === MODES.EDIT ? <Edit2Icon /> : <Plus />}
+                        mode="light"
+                        onClick={handleOnSubmit}
+                    />
+                    <Button
+                        label="Cancel"
+                        icon={<XIcon />}
+                        mode="dark"
+                        onClick={() => {
+                            router.replace('/authors');
+                        }}
+                    />
+                    {mode === MODES.EDIT ? (
+                        <Button
+                            classes="btn-delete"
+                            label="Delete Author"
+                            icon={<DeleteIcon />}
+                            mode="dark"
+                            isLoading={deleteAuthorLoading}
+                            onClick={handleDeleteAuthor}
+                        />
+                    ) : null}
+                </div>
+            </>
+        );
+    };
     return (
         <div className="postauthor__container">
-            <div className="postauthor__container--header">
-                <div className="header-title">{mode === MODES.ADD ? 'Add A New Author' : 'Edit Author'}</div>
-            </div>
-            <div className="postauthor__container--content">
-                <div className="content-form">
-                    <FormInput
-                        label={<>Name of the author <MandatoryAsterisk /></>}
-                        placeholder="Enter name of the author"
-                        value={formData.name}
-                        error={error.name}
-                        onChange={text => {
-                            setFormData(prevObj => {
-                                return {
-                                    ...prevObj,
-                                    name: text,
-                                }
-                            });
-                        }}
-                    />
+            {mode === MODES.EDIT && !authorData ? (
+                <div className="content-loader">Loading author profile...</div>
+            ) : null}
 
-                    <FormTextarea
-                        label={<>Biography <MandatoryAsterisk /></>}
-                        placeholder="Enter biography for the author"
-                        value={formData.biography}
-                        error={error.biography}
-                        rows={10}
-                        onChange={text => {
-                            setFormData(prevObj => {
-                                return {
-                                    ...prevObj,
-                                    biography: text,
-                                }
-                            })
-                        }}
-                    />
-
-                    <FormInput
-                        label={<>Date of birth (YYYY-MM-DD) <MandatoryAsterisk /></>}
-                        placeholder="Enter date of birth of the author (YYYY-MM-DD)"
-                        value={formData.date_of_birth}
-                        error={error.date_of_birth}
-                        onChange={text => {
-                            setFormData(prevObj => {
-                                return {
-                                    ...prevObj,
-                                    date_of_birth: text,
-                                }
-                            });
-                        }}
-                    />
-                </div>
-
-                <div className="form-header">
-                    Enter Metadata for the author
-                </div>
-
-                <div className="metadata-form">
-                    <FormInput
-                        label="Nationality"
-                        placeholder="Enter nationality of the author"
-                        value={formData.nationality}
-                        onChange={text => {
-                            setFormData(prevObj => {
-                                return {
-                                    ...prevObj,
-                                    nationality: text,
-                                }
-                            });
-                        }}
-                    />
-                    <FormInput
-                        label="Languages"
-                        placeholder="Enter langauges of the author"
-                        value={formData.languages}
-                        onChange={text => {
-                            setFormData(prevObj => {
-                                return {
-                                    ...prevObj,
-                                    languages: text,
-                                }
-                            });
-                        }}
-                    />
-                </div>
-            </div>
-
-            <div className="postauthor__container--actions">
-                <Button
-                    classes="btn-add-author"
-                    label={`${mode === MODES.EDIT ? 'Edit' : 'Add'} author`}
-                    icon={mode === MODES.EDIT ? <Edit2Icon /> : <Plus />}
-                    mode="light"
-                    onClick={handleOnSubmit}
-                />
-                <Button
-                    label="Cancel"
-                    icon={<XIcon />}
-                    mode="dark"
-                    onClick={() => {
-                        router.replace('/authors');
-                    }}
-                />
-                {mode === MODES.EDIT ? (
-                    <Button
-                        classes="btn-delete"
-                        label="Delete Author"
-                        icon={<DeleteIcon />}
-                        mode="dark"
-                        isLoading={deleteAuthorLoading}
-                        onClick={handleDeleteAuthor}
-                    />
-                ) : null}
-            </div>
+            {mode === MODES.EDIT && !loading && authorData ? getContent() : null}
+            {mode === MODES.ADD ? getContent() : null}
         </div>
     );
 }

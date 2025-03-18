@@ -31,34 +31,31 @@ const BookItem = props => {
     }
 
     return (
-        <div className="bookitem__wrapper" onClick={handleOnItemClick}>
-            {isAuthenticated && user && user.userType == 1 ? (
-                <div className="btn-edit" onMouseDown={handleOnBookEdit}>
-                    <Edit2Icon />
+        <div className="bookitem__container" onClick={handleOnItemClick}>
+            <div className="bookitem__container--header">
+                <div className="header-container">
+                    <div className="title">{title}</div>
+                    {user && isAuthenticated ? (
+                        <div className="btn-edit" onMouseDown={handleOnBookEdit}>
+                            <Edit2Icon />
+                        </div>
+                    ) : null}
                 </div>
-            ) : null}
-
-            <div className="bookitem__container">
-                <div className="bookitem__container--title">
-                    <div>
-                        {title}
-                    </div>
-                    <ReactStars
-                        value={averageRating}
-                        edit={false}
-                        count={5}
-                    />
-                </div>
-
-                <div className="bookitem__container--meta">
-                    <div className="meta-desc">{truncateDescription(description)}</div>
-                    <div className="meta-author">
-                        <div className="name">{author}</div>
-                        {published_date ? <div className="date">Published On: {moment(published_date).format('DD MMMM YYYY')}</div> : null}
-                    </div>
-                </div>
-
+                <ReactStars
+                    value={averageRating}
+                    edit={false}
+                    count={5}
+                />
             </div>
+
+            <div className="bookitem__container--meta">
+                <div className="meta-desc">{truncateDescription(description)}</div>
+                <div className="meta-author">
+                    <div className="name">{author}</div>
+                    {published_date ? <div className="date">Published On: {moment(published_date).format('DD MMMM YYYY')}</div> : null}
+                </div>
+            </div>
+
         </div>
     );
 }

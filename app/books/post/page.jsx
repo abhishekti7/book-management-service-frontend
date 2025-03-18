@@ -93,10 +93,10 @@ const PostBook = () => {
                         published_date: book.published_date,
                         author_id: book.author ? book.author.id : '',
                         author_name: book.author ? book.author.name : '',
-                        genres: book.metadata ? book.metadata.genres.join(',') : '',
-                        tags: book.metadata ? book.metadata.tags.join(',') : '',
-                        average_rating: book.metadata ? book.metadata.average_rating : '',
-                        page_count: book.metadata ? book.metadata.page_count : ''
+                        genres: book.metadata && book.metadata.genres ? book.metadata.genres.join(',') : '',
+                        tags: book.metadata && book.metadata.tags ? book.metadata.tags.join(',') : '',
+                        average_rating: book.metadata && book.metadata.average_rating ? book.metadata.average_rating : '',
+                        page_count: book.metadata && book.metadata.page_count ? book.metadata.page_count : ''
                     }
                 })
             }
@@ -307,186 +307,200 @@ const PostBook = () => {
         }
     }
 
+    const getContent = () => {
+        return (
+            <>
+
+                <div className="postbook__container--header">
+                    <div className="header-title">{mode === MODES.ADD ? 'Add A New Book' : 'Edit Book'}</div>
+                </div>
+                <div className="postbook__container--content">
+                    <div className="content-form">
+                        <FormInput
+                            label={<>Title of the book <MandatoryAsterisk /></>}
+                            placeholder="Enter title of the book"
+                            value={formData.title}
+                            error={error.title}
+                            onChange={text => {
+                                setFormData(prevObj => {
+                                    return {
+                                        ...prevObj,
+                                        title: text,
+                                    }
+                                });
+                            }}
+                        />
+
+                        <FormTextarea
+                            label={<>Description <MandatoryAsterisk /></>}
+                            placeholder="Enter description of the book"
+                            value={formData.description}
+                            error={error.description}
+                            rows={10}
+                            onChange={text => {
+                                setFormData(prevObj => {
+                                    return {
+                                        ...prevObj,
+                                        description: text,
+                                    }
+                                });
+                            }}
+                        />
+
+                        <FormInput
+                            label={<>Published Date <MandatoryAsterisk /></>}
+                            placeholder="Enter date of publication of the book (YYYY-MM-DD)"
+                            value={formData.published_date}
+                            error={error.published_date}
+                            onChange={text => {
+                                setFormData(prevObj => {
+                                    return {
+                                        ...prevObj,
+                                        published_date: text,
+                                    }
+                                });
+                            }}
+                        />
+
+                        <FormSearchDropdown
+                            label={<>Select author <MandatoryAsterisk /></>}
+                            placeholder="Type to select author"
+                            selected={{
+                                id: formData.author_id,
+                                name: formData.author_name
+                            }}
+                            error={error.author_id}
+                            options={authorsList}
+                            onItemSelected={(id, name) => {
+                                setFormData(prevObj => {
+                                    return {
+                                        ...prevObj,
+                                        author_id: id,
+                                        author_name: name
+                                    }
+                                })
+                            }}
+                            onChange={(text) => {
+                                setAuthorInput(text);
+                            }}
+                            onClear={() => {
+                                setFormData(prevObj => {
+                                    return {
+                                        ...prevObj,
+                                        author_id: null,
+                                        author_name: ''
+                                    }
+                                })
+                            }}
+                        />
+                    </div>
+
+                    <div className="form-header">
+                        Enter Metadata for the book
+                    </div>
+
+                    <div className="metadata-form">
+                        <FormInput
+                            label="Genres"
+                            placeholder="Enter genres that the book belongs to"
+                            value={formData.genres}
+                            error={error.genres}
+                            onChange={text => {
+                                setFormData(prevObj => {
+                                    return {
+                                        ...prevObj,
+                                        genres: text,
+                                    }
+                                });
+                            }}
+                        />
+                        <FormInput
+                            label="Tags"
+                            placeholder="Enter the tags for the book"
+                            value={formData.tags}
+                            error={error.tags}
+                            onChange={text => {
+                                setFormData(prevObj => {
+                                    return {
+                                        ...prevObj,
+                                        tags: text,
+                                    }
+                                });
+                            }}
+                        />
+                        <FormInput
+                            label="Average Rating"
+                            placeholder="Enter the average rating for the book"
+                            value={formData.average_rating}
+                            error={error.average_rating}
+                            onChange={text => {
+                                setFormData(prevObj => {
+                                    return {
+                                        ...prevObj,
+                                        average_rating: text,
+                                    }
+                                });
+                            }}
+                        />
+                        <FormInput
+                            label="Page Count"
+                            placeholder="Enter the length of the book"
+                            value={formData.page_count}
+                            error={error.page_count}
+                            onChange={text => {
+                                setFormData(prevObj => {
+                                    return {
+                                        ...prevObj,
+                                        page_count: text,
+                                    }
+                                });
+                            }}
+                        />
+                    </div>
+                </div>
+
+                <div className="postbook__container--actions">
+                    <Button
+                        classes="btn-add-book"
+                        label={`${mode === MODES.EDIT ? 'Edit' : 'Add'} book`}
+                        icon={mode === MODES.EDIT ? <Edit2Icon /> : <Plus />}
+                        mode="light"
+                        isLoading={mode === MODES.EDIT ? editBookLoading : postBookLoading}
+                        onClick={handleOnSubmit}
+                    />
+                    <Button
+                        label="Cancel"
+                        icon={<XIcon />}
+                        mode="dark"
+                        onClick={() => {
+                            router.replace('/books');
+                        }}
+                    />
+
+                    {mode === MODES.EDIT ? (
+                        <Button
+                            classes="btn-delete"
+                            label="Delete Book"
+                            icon={<DeleteIcon />}
+                            mode="dark"
+                            isLoading={deleteBookLoading}
+                            onClick={handleDeleteBook}
+                        />
+                    ) : null}
+
+                </div>
+            </>
+        )
+    }
+
     return (
         <div className="postbook__container">
-            <div className="postbook__container--header">
-                <div className="header-title">{mode === MODES.ADD ? 'Add A New Book' : 'Edit Book'}</div>
-            </div>
-            <div className="postbook__container--content">
-                <div className="content-form">
-                    <FormInput
-                        label={<>Title of the book <MandatoryAsterisk /></>}
-                        placeholder="Enter title of the book"
-                        value={formData.title}
-                        error={error.title}
-                        onChange={text => {
-                            setFormData(prevObj => {
-                                return {
-                                    ...prevObj,
-                                    title: text,
-                                }
-                            });
-                        }}
-                    />
+            {mode === MODES.EDIT && !bookData ? (
+                <div className="content-loader">Loading book details...</div>
+            ) : null}
 
-                    <FormTextarea
-                        label={<>Description <MandatoryAsterisk /></>}
-                        placeholder="Enter description of the book"
-                        value={formData.description}
-                        error={error.description}
-                        rows={10}
-                        onChange={text => {
-                            setFormData(prevObj => {
-                                return {
-                                    ...prevObj,
-                                    description: text,
-                                }
-                            });
-                        }}
-                    />
-
-                    <FormInput
-                        label={<>Published Date <MandatoryAsterisk /></>}
-                        placeholder="Enter date of publication of the book (YYYY-MM-DD)"
-                        value={formData.published_date}
-                        error={error.published_date}
-                        onChange={text => {
-                            setFormData(prevObj => {
-                                return {
-                                    ...prevObj,
-                                    published_date: text,
-                                }
-                            });
-                        }}
-                    />
-
-                    <FormSearchDropdown
-                        label={<>Select author <MandatoryAsterisk /></>}
-                        placeholder="Type to select author"
-                        selected={{
-                            id: formData.author_id,
-                            name: formData.author_name
-                        }}
-                        error={error.author_id}
-                        options={authorsList}
-                        onItemSelected={(id, name) => {
-                            setFormData(prevObj => {
-                                return {
-                                    ...prevObj,
-                                    author_id: id,
-                                    author_name: name
-                                }
-                            })
-                        }}
-                        onChange={(text) => {
-                            setAuthorInput(text);
-                        }}
-                        onClear={() => {
-                            setFormData(prevObj => {
-                                return {
-                                    ...prevObj,
-                                    author_id: null,
-                                    author_name: ''
-                                }
-                            })
-                        }}
-                    />
-                </div>
-
-                <div className="form-header">
-                    Enter Metadata for the book
-                </div>
-
-                <div className="metadata-form">
-                    <FormInput
-                        label="Genres"
-                        placeholder="Enter genres that the book belongs to"
-                        value={formData.genres}
-                        error={error.genres}
-                        onChange={text => {
-                            setFormData(prevObj => {
-                                return {
-                                    ...prevObj,
-                                    genres: text,
-                                }
-                            });
-                        }}
-                    />
-                    <FormInput
-                        label="Tags"
-                        placeholder="Enter the tags for the book"
-                        value={formData.tags}
-                        error={error.tags}
-                        onChange={text => {
-                            setFormData(prevObj => {
-                                return {
-                                    ...prevObj,
-                                    tags: text,
-                                }
-                            });
-                        }}
-                    />
-                    <FormInput
-                        label="Average Rating"
-                        placeholder="Enter the average rating for the book"
-                        value={formData.average_rating}
-                        error={error.average_rating}
-                        onChange={text => {
-                            setFormData(prevObj => {
-                                return {
-                                    ...prevObj,
-                                    average_rating: text,
-                                }
-                            });
-                        }}
-                    />
-                    <FormInput
-                        label="Page Count"
-                        placeholder="Enter the length of the book"
-                        value={formData.page_count}
-                        error={error.page_count}
-                        onChange={text => {
-                            setFormData(prevObj => {
-                                return {
-                                    ...prevObj,
-                                    page_count: text,
-                                }
-                            });
-                        }}
-                    />
-                </div>
-            </div>
-
-            <div className="postbook__container--actions">
-                <Button
-                    classes="btn-add-book"
-                    label={`${mode === MODES.EDIT ? 'Edit' : 'Add'} book`}
-                    icon={mode === MODES.EDIT ? <Edit2Icon /> : <Plus />}
-                    mode="light"
-                    isLoading={mode === MODES.EDIT ? editBookLoading : postBookLoading}
-                    onClick={handleOnSubmit}
-                />
-                <Button
-                    label="Cancel"
-                    icon={<XIcon />}
-                    mode="dark"
-                    onClick={() => {
-                        router.replace('/books');
-                    }}
-                />
-
-                {mode === MODES.EDIT ? (
-                    <Button
-                        classes="btn-delete"
-                        label="Delete Book"
-                        icon={<DeleteIcon />}
-                        mode="dark"
-                        isLoading={deleteBookLoading}
-                        onClick={handleDeleteBook}
-                    />
-                ) : null}
-
-            </div>
+            {mode === MODES.EDIT && bookData ? getContent() : null}
+            {mode === MODES.ADD && bookData ? getContent() : null}
         </div>
     );
 };

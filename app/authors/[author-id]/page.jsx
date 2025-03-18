@@ -4,11 +4,12 @@ import moment from "moment";
 import { useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
 
+import BookItem from "@/app/books/components/BookItem";
+``
+import { GET_BOOKS } from "@/graphql-services/getBooks";
 import { GET_AUTHOR } from "@/graphql-services/getAuthor";
 
 import "./styles.scss";
-import { GET_BOOKS } from "@/graphql-services/getBooks";
-import BookItem from "@/app/books/components/BookItem";
 
 const AuthorDetails = props => {
     const params = useParams();
@@ -30,16 +31,18 @@ const AuthorDetails = props => {
         }
     });
 
+    console.log(data, error);
+
     const getContent = () => {
         if (loading) {
             return (
-                <div>Loading...</div>
+                <div className="content-loader">Loading...</div>
             )
-        } else if (!loading && error && !data) {
+        } else if (!loading && error || (!data || !data.author)) {
             return (
-                <div>Author not found!</div>
+                <div className="content-error">Author not found!</div>
             )
-        } else {
+        } else if (!loading && data && data.author) {
             return (
                 <>
                     <div className="authordetails__container--header">
@@ -58,44 +61,47 @@ const AuthorDetails = props => {
         }
     };
 
-    console.log(booksData)
-
     return (
         <div className="authordetails__container">
             {getContent()}
 
             <div className="authordetails__container--books">
-                <div className="books-header">
-                    Books by the author:
-                </div>
-
-                <div className="books-content">
-                    {booksLoading ? (
-                        <div>Loading books...</div>
-                    ) : null}
-
-                    {!booksLoading && !booksData && booksError ? (
-                        <div>No books found</div>
-                    ) : null}
-
-                    <div className="books-list">
-                        {booksData && booksData.books && booksData.books.books ? (
-                            booksData.books.books.map(item => {
-                                return (
-                                    <BookItem
-                                        key={item.id}
-                                        id={item.id}
-                                        title={item.title}
-                                        description={item.description}
-                                        author={item.author ? item.author.name : ''}
-                                        published_date={item.published_date}
-                                        averageRating={item.metadata ? item.metadata.average_rating : 0}
-                                    />
-                                );
-                            })
+                {data && data.author ? (
+                    <>
+                        {!booksLoading ? (
+                            <div className="books-header">
+                                Books by the author:
+                            </div>
                         ) : null}
-                    </div>
-                </div>
+                        <div className="books-content">
+                            {booksLoading ? (
+                                <div>Loading books...</div>
+                            ) : null}
+
+                            {!booksLoading && !booksData && booksError ? (
+                                <div>No books found</div>
+                            ) : null}
+
+                            <div className="books-list">
+                                {booksData && booksData.books && booksData.books.books ? (
+                                    booksData.books.books.map(item => {
+                                        return (
+                                            <BookItem
+                                                key={item.id}
+                                                id={item.id}
+                                                title={item.title}
+                                                description={item.description}
+                                                author={item.author ? item.author.name : ''}
+                                                published_date={item.published_date}
+                                                averageRating={item.metadata ? item.metadata.average_rating : 0}
+                                            />
+                                        );
+                                    })
+                                ) : null}
+                            </div>
+                        </div>
+                    </>
+                ) : null}
             </div>
         </div>
     );

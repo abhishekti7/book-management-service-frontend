@@ -53,6 +53,7 @@ const Books = () => {
             order: params.order,
         },
         onCompleted: () => {
+            console.log('complete');
             isFetchMoreLoading.current = false;
         }
     });
@@ -65,9 +66,6 @@ const Books = () => {
         });
     };
 
-    const applyFilters = () => {
-
-    }
 
     // clear search input query, we will refetch the first page using default filters
     const handleOnClearSearch = () => {
@@ -211,7 +209,6 @@ const Books = () => {
 
         authorTimer.current = timerId;
     }, [filters.authorSearchInput]);
-
 
     // handles scroll event on the window
     // when user reaches the required scroll length, we fetch the next page
@@ -379,7 +376,10 @@ const Books = () => {
 
             <div className="bookslist__container--content">
                 <div className="content-list">
-                    {data && data.books && data.books.books ? data.books.books.map(bookItem => {
+                    {loading && !data ? (
+                        <div className="content-loader">Loading...</div>
+                    ) : null}
+                    {!loading && data && data.books && data.books.books ? data.books.books.map(bookItem => {
                         return (
                             <BookItem
                                 key={bookItem.id}
@@ -392,6 +392,10 @@ const Books = () => {
                             />
                         )
                     }) : null}
+
+                    {loading && data ? (
+                        <div>Loading next page...</div>
+                    ) : null}
                 </div>
             </div>
 
