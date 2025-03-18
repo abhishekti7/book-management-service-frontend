@@ -35,7 +35,6 @@ const Books = props => {
             sortBy: params.sortBy,
             order: params.order,
         },
-
         onCompleted: () => {
             isFetchMoreLoading.current = false;
         }
