@@ -10,7 +10,7 @@ const Dropdown = props => {
     return (
         <div className="dropdown__container">
             <select onChange={handleOnChange} defaultValue={value}>
-                {options.map(item => {
+                {options && options.map(item => {
                     return (
                         <option key={item.id} value={item.id} selected={item.value == value}>
                             {item.value}

@@ -1,4 +1,6 @@
 'use client';
+
+import moment from "moment";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { PlusIcon, Search, XIcon } from "lucide-react";
@@ -9,6 +11,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { GET_AUTHORS } from "@/graphql-services/getAuthors";
 import Button from "@/components/Button";
 import AuthorItem from "./components/AuthorItem";
+import FormDropdown from "@/components/FormDropdown";
 import InputBox from "@/components/InputBox";
 
 import "./styles.scss";
@@ -18,6 +21,8 @@ const Authors = () => {
     const { user, isAuthenticated } = useAuth();
 
     const [searchInput, setSearchInput] = useState('');
+    const [selectedYear, setSelectedYear] = useState(-1);
+
     const isFetchMoreLoading = useRef(false);
 
     const [params, setParams] = useState({
@@ -83,11 +88,8 @@ const Authors = () => {
     }, [isFetchMoreLoading, data]);
 
     const handleOnClearSearch = () => {
-        if (!params.filter.search) {
-            return;
-        }
-
         setSearchInput('');
+        setSelectedYear(-1);
         setParams({
             page: 1,
             filter: {},
@@ -130,6 +132,39 @@ const Authors = () => {
             order: params.order,
         });
     };
+
+    const handleOnYearChange = (value) => {
+        setSelectedYear(value);
+
+        const filter = {
+            page: 1,
+            limit: 10,
+            filter: {
+                ...params.filter,
+                born_on: value,
+            },
+            sortBy: params.sortBy,
+            order: params.order,
+        }
+
+        setParams(filter);
+
+        // refetch the query with the new search query
+        refetch(filter);
+    };
+
+    const getYearOptions = () => {
+        const options = [{ id: -1, value: 'Select year' }];
+
+        for (let i = moment().year(); i >= 1950; i--) {
+            options.push({
+                id: i,
+                value: i,
+            });
+        }
+
+        return options;
+    }
 
     return (
         <div className="authorlist__container">
@@ -179,6 +214,15 @@ const Authors = () => {
                         mode="dark"
                         isLoading={loading}
                         onClick={handleOnClearSearch}
+                    />
+                </div>
+
+                <div className="filter-options">
+                    <FormDropdown
+                        label="Fitler by year of birth"
+                        value={selectedYear}
+                        options={getYearOptions()}
+                        onChange={handleOnYearChange}
                     />
                 </div>
             </div>
